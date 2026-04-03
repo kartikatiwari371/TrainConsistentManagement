@@ -1,13 +1,14 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-class GoodsBogie {
-    String type;
-    String cargo;
+class Bogie {
+    String name;
+    int capacity;
 
-    GoodsBogie(String type, String cargo) {
-        this.type = type;
-        this.cargo = cargo;
+    Bogie(String name, int capacity) {
+        this.name = name;
+        this.capacity = capacity;
     }
 }
 
@@ -15,15 +16,35 @@ public class TrainConsistManagementApp {
     public static void main(String[] args) {
         System.out.println("=== Train Consist Management App ===");
 
-        List<GoodsBogie> goodsBogies = new ArrayList<>();
+        List<Bogie> bogies = new ArrayList<>();
 
-        goodsBogies.add(new GoodsBogie("Cylindrical", "Petroleum"));
-        goodsBogies.add(new GoodsBogie("Rectangular", "Coal"));
-        goodsBogies.add(new GoodsBogie("Cylindrical", "Petroleum"));
+        for (int i = 0; i < 1000; i++) {
+            bogies.add(new Bogie("Sleeper", 72));
+            bogies.add(new Bogie("AC Chair", 60));
+            bogies.add(new Bogie("First Class", 24));
+        }
 
-        boolean isSafe = goodsBogies.stream()
-                .allMatch(b -> !b.type.equals("Cylindrical") || b.cargo.equals("Petroleum"));
+        long startLoop = System.nanoTime();
+        List<Bogie> loopResult = new ArrayList<>();
+        for (Bogie b : bogies) {
+            if (b.capacity > 60) {
+                loopResult.add(b);
+            }
+        }
+        long endLoop = System.nanoTime();
 
-        System.out.println("Safety Compliance: " + isSafe);
+        long startStream = System.nanoTime();
+        List<Bogie> streamResult = bogies.stream()
+                .filter(b -> b.capacity > 60)
+                .collect(Collectors.toList());
+        long endStream = System.nanoTime();
+
+        long loopTime = endLoop - startLoop;
+        long streamTime = endStream - startStream;
+
+        System.out.println("Loop Time: " + loopTime);
+        System.out.println("Stream Time: " + streamTime);
+        System.out.println("Loop Result Size: " + loopResult.size());
+        System.out.println("Stream Result Size: " + streamResult.size());
     }
 }
